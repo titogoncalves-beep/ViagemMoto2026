@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contas Viagem Moto 2026 — Calculadora</title>
+  <style>
+    :root { --bg:#0b1220; --card:#111a2e; --muted:#94a3b8; --text:#e5e7eb; --acc:#38bdf8; --good:#34d399; --bad:#fb7185; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: navy url('picos-europa-motorcycle-route.jpg') center/cover no-repeat fixed; color:var(--text); display:flex; justify-content:center; }
+    header { padding: 28px 18px 10px; max-width: 1100px; width:100%; margin:0 auto; }
+    h1 { margin:0 0 8px; font-size: 24px; text-align: center; }
+    p { margin: 6px 0; color: var(--muted); }
+    .grid { display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 14px; max-width: 1100px; margin: 0 auto; padding: 14px 18px 28px; }
+    .card { background: rgba(17,26,46,.98); border: 1px solid rgba(148,163,184,.18); border-radius: 14px; padding: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.28); }
+    .card h2 { font-size: 16px; margin: 0 0 10px; }
+    .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; }
+    .row div { text-align: center; }
+    label { font-size: 12px; color: var(--muted); display:block; margin-bottom: 4px; }
+    input[type=number] { width: 140px; padding: 10px 10px; border-radius: 10px; border: 1px solid rgba(148,163,184,.25); background:#0b1220; color:var(--text); text-align: center; }
+    input[type=number]:focus { outline: 2px solid rgba(56,189,248,.35); border-color: rgba(56,189,248,.55); }
+    table { width:100%; border-collapse: collapse; overflow:hidden; border-radius: 12px; }
+    th, td { padding: 10px 10px; border-bottom: 1px solid rgba(148,163,184,.14); text-align: center; }
+    th:first-child, td:first-child { text-align: center; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+    tfoot td { font-weight:700; }
+    .pill { display:inline-flex; gap:8px; align-items:center; padding: 6px 10px; border-radius: 999px; border:1px solid rgba(148,163,184,.2); background: rgba(11,18,32,.55); color: var(--muted); font-size: 12px; }
+    .kpi { display:grid; grid-template-columns: 1fr; gap: 10px; text-align: center; }
+    .kpi .box { background: rgba(11,18,32,.55); border:1px solid rgba(148,163,184,.18); border-radius: 12px; padding: 12px; }
+    .kpi .val { font-size: 18px; font-weight: 800; margin-top: 2px; }
+    #kpi_total { font-size: 22px; }
+    .kpi .box:last-child .sub { font-size: 16px; font-weight: bold; text-decoration: underline; }
+    .kpi .sub { font-size: 12px; color: var(--muted); }
+    a { color: var(--acc); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .links { text-align: center; }
+    .links ul { margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+    .note { font-size: 12px; color: var(--muted); margin-top: 10px; }
+    @media (max-width: 920px) { .grid { grid-template-columns: 1fr; } input[type=number]{ width: 100%; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Viagem Moto 2026 - Picos da Europa</h1>
+  <p style="text-align:center; color:white; font-weight:bold;">Cálculos dos gastos esperados para a EasyRiders Touring de 2026. Permite alterar valores de referência (ex.: consumo, preço do litro, refeições, custos por dia) para obter os totais automaticamente.</p>
+
+  <section class="card" style="text-align:center;">
+    <h2>1) Valores:</h2>
+    <div class="row">
+      <div>
+        <label for="people">Nº de pessoas</label>
+        <input id="people" type="number" min="1" step="1" value="4" />
+      </div>
+      <div>
+        <label for="cons">Consumo (L/100 km)</label>
+        <input id="cons" type="number" min="0" step="0.1" value="4.5" />
+      </div>
+      <div>
+        <label for="price">Preço por litro (€)</label>
+        <input id="price" type="number" min="0" step="0.01" value="1.75" />
+      </div>
+      <div>
+        <label for="meals">Refeições / extras por dia (€)</label>
+        <input id="meals" type="number" min="0" step="1" value="40.0" />
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <table aria-label="Tabela de custos por dia">
+      <thead>
+        <tr>
+          <th>Dia</th>
+          <th>Valor Noite (4 pessoas) €</th>
+          <th>Garagem €</th>
+          <th>Total Hotel Noite €</th>
+          <th>Kms</th>
+          <th>Combustível €</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+      <tfoot>
+        <tr>
+          <td>Total</td>
+          <td id="t_night">0</td>
+          <td id="t_garage">0</td>
+          <td id="t_hotel">0</td>
+          <td id="t_kms">0</td>
+          <td id="t_fuel">0</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p class="note">Cálculos: <strong>Total Hotel (dia) = Noite + Garagem</strong> e <strong>Combustível (dia) = Kms × (Consumo/100) × Preço/L</strong>.</p>
+  </section>
+
+  <aside class="card" style="text-align:center;">
+    <h2>2) Resultados por Pessoa:</h2>
+    <div class="kpi">
+      <div class="box">
+        <div class="sub">Total Hotel (€)</div>
+        <div class="val" id="kpi_hotel">—</div>
+        <div class="sub" id="kpi_hotel_pp">—</div>
+      </div>
+      <div class="box">
+        <div class="sub">Total Combustível (€)</div>
+        <div class="val" id="kpi_fuel">—</div>
+      </div>
+      <div class="box">
+        <div class="sub">Refeições / extras (total) (€)</div>
+        <div class="val" id="kpi_meals">—</div>
+      </div>
+      <div class="box">
+        <div class="sub">Total Despesas por Pessoa (€)</div>
+        <div class="val" id="kpi_total">—</div>
+      </div>
+    </div>
+
+    <div style="height:12px"></div>
+
+    <div class="links">
+      <h2>3) Links:</h2>
+      <div class="note"><strong>Percursos:</strong></div>
+      <ul><li><a href="https://maps.app.goo.gl/Pso5yJAvNTgGg2F28" target="_blank" rel="noopener">Dia 1 - Leon</a></li><li><a href="https://maps.app.goo.gl/5bTnckY3wZ6R7Q7TA" target="_blank" rel="noopener">Dia 2 - Cangas de Onis</a></li><li><a href="https://maps.app.goo.gl/8ba5o6fRvAdPmTaD6" target="_blank" rel="noopener">Dia 3 - Leon</a></li><li><a href="https://maps.app.goo.gl/QteSQsBt3BpoNEby6" target="_blank" rel="noopener">Dia 4 - Celorico de Basto</a></li><li><a href="https://maps.app.goo.gl/MV6xBYNbA3Gu1QTf6" target="_blank" rel="noopener">Dia 5 - Ericeira</a></li></ul>
+      <div class="note"><strong>Hotéis</strong></div>
+      <ul><li><a href="https://www.tripadvisor.pt/Hotel_Review-g187492-d469512-Reviews-Apartahotel_Exe_Campus_San_Mames-Leon_Province_of_Leon_Castile_and_Leon.html" target="_blank" rel="noopener">Aparthotel Exe Campus San Mamés</a></li><li><a href="https://www.tripadvisor.pt/Hotel_Review-g662890-d578005-Reviews-Hotel_Ciudad_de_Cangas_de_Onis-Cangas_de_Onis_Asturias.html" target="_blank" rel="noopener">Hotel Ciudad Cangas de Onis</a></li><li><a href="https://www.tripadvisor.pt/Hotel_Review-g187492-d469514-Reviews-Exe_Leon-Leon_Province_of_Leon_Castile_and_Leon.html" target="_blank" rel="noopener">Dorma León</a></li><li><a href="https://www.tripadvisor.pt/Hotel_Review-g33440360-d10753705-Reviews-LAM_Hotel_Celorico_de_Basto-Gemeos_Braga_District_Northern_Portugal.html" target="_blank" rel="noopener">Lam Hotel Celorico de Basto</a></li><li><a href="https://maps.app.goo.gl/MV6xBYNbA3Gu1QTf6" target="_blank" rel="noopener">Dia 5 - Ericeira</a></li></ul>
+    </div>
+
+  </aside>
+</div>
+
+<script>
+  const dayNames = ["Dia 1","Dia 2","Dia 3","Dia 4","Dia 5"]; 
+  const defaults = {
+    night: [150, 140, 170, 185, 0],
+    garage: [7, 10, 12, 0, 0],
+    kms: [652, 310, 275, 363, 387]
+  };
+
+  function eur(x) {
+    return (Number.isFinite(x) ? x : 0).toLocaleString('pt-PT', { style: 'currency', currency: 'EUR' });
+  }
+  function num(x) {
+    const v = parseFloat(x);
+    return Number.isFinite(v) ? v : 0;
+  }
+
+  function buildTable() {
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = '';
+    for (let i = 0; i < dayNames.length; i++) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${dayNames[i]}</td>
+        <td><input class="night" type="number" min="0" step="1" value="${(defaults.night[i] ?? 0)}" /></td>
+        <td><input class="garage" type="number" min="0" step="1" value="${(defaults.garage[i] ?? 0)}" /></td>
+        <td class="hotelDay">—</td>
+        <td><input class="kms" type="number" min="0" step="1" value="${(defaults.kms[i] ?? 0)}" /></td>
+        <td class="fuelDay">—</td>
+      `;
+      tbody.appendChild(tr);
+    }
+  }
+
+  function recalc() {
+    const people = Math.max(1, Math.round(num(document.getElementById('people').value)));
+    document.getElementById('people').value = people;
+
+    const cons = num(document.getElementById('cons').value);
+    const price = num(document.getElementById('price').value);
+    const mealsDaily = num(document.getElementById('meals').value);
+
+    const rows = [...document.querySelectorAll('#tbody tr')];
+
+    let tNight = 0, tGarage = 0, tHotel = 0, tKms = 0, tFuel = 0;
+
+    rows.forEach((tr) => {
+      const night = num(tr.querySelector('input.night').value);
+      const garage = num(tr.querySelector('input.garage').value);
+      const kms = num(tr.querySelector('input.kms').value);
+
+      const hotel = night + garage;
+      const fuel = kms * (cons / 100) * price;
+
+      tr.querySelector('.hotelDay').textContent = eur(hotel);
+      tr.querySelector('.fuelDay').textContent = eur(fuel);
+
+      tNight += night; tGarage += garage; tHotel += hotel; tKms += kms; tFuel += fuel;
+    });
+
+    const days = rows.length;
+    const mealsTotal = mealsDaily * days;
+    const total = tHotel + tFuel + mealsTotal;
+
+    document.getElementById('t_night').textContent = eur(tNight);
+    document.getElementById('t_garage').textContent = eur(tGarage);
+    document.getElementById('t_hotel').textContent = eur(tHotel);
+    document.getElementById('t_kms').textContent = tKms.toLocaleString('pt-PT');
+    document.getElementById('t_fuel').textContent = eur(tFuel);
+
+    document.getElementById('kpi_hotel').textContent = eur(tHotel/people);
+    document.getElementById('kpi_hotel_pp').textContent = `Valor médio dia: ${eur((tHotel/people)/4)}`;
+
+    document.getElementById('kpi_fuel').textContent = eur(tFuel);
+
+    document.getElementById('kpi_meals').textContent = eur(mealsTotal);
+
+    document.getElementById('kpi_total').textContent = eur((tHotel/people) + tFuel + mealsTotal);
+  }
+
+  buildTable();
+  recalc();
+
+  document.addEventListener('input', (e) => {
+    if (e.target.matches('input')) recalc();
+  });
+</script>
+</body>
+</html>
