@@ -5,9 +5,6 @@ Este mini-site (index.html + app.js + styles.css) é standalone e funciona offli
 ## Funcionalidades
 - Alterar nº de pessoas, consumo, preço do litro e refeições/dia.
 - Editar valores por dia (noite, garagem, kms) e ver totais a atualizar.
-- Adicionar/remover dias.
-- Exportar/Importar em JSON.
-- Guardar automaticamente no browser (localStorage).
 - Layout moderno + mobile-friendly + modo claro/escuro.
 
 ## Como usar
